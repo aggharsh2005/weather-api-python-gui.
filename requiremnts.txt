@@ -1,0 +1,6 @@
+This file lists all the Python libraries the project depends on, here are the required libraries:
+
+pandas
+matplotlib
+scikit-learn
+

@@ -1,20 +1,18 @@
-
-```python
-import tkinter as tk
 import requests
 
-API_KEY = "YOUR_API_KEY"  # <-- Replace this with your OpenWeatherMap API key
+API_KEY = "5636da6712032f442840ed113b0a9b86"
 
 def get_weather(city):
     base_url = "http://api.openweathermap.org/data/2.5/weather"
     params = {
-        'q': city,
+        'q': city.strip(),
         'appid': API_KEY,
         'units': 'metric'
     }
 
     try:
         response = requests.get(base_url, params=params)
+        print("API Raw Response:", response.text)  # Debug line
         response.raise_for_status()
         data = response.json()
 
@@ -25,7 +23,7 @@ def get_weather(city):
         wind = data['wind']['speed']
 
         result = (
-            f"City: {city_name}\n"
+            f"\nCity: {city_name}\n"
             f"Temperature: {temp}°C\n"
             f"Condition: {description}\n"
             f"Humidity: {humidity}%\n"
@@ -33,32 +31,12 @@ def get_weather(city):
         )
         return result
 
-    except requests.exceptions.HTTPError:
-        return "City not found. Please try again."
+    except requests.exceptions.HTTPError as http_err:
+        return f"HTTP Error: {http_err}"
     except Exception as e:
         return f"Error: {str(e)}"
 
-def show_weather():
-    city = city_entry.get()
-    result = get_weather(city)
-    result_label.config(text=result)
+# Ask for city name
+city = input("Enter city name: ")
+print(get_weather(city))
 
-# GUI setup
-root = tk.Tk()
-root.title("🌤 Weather App")
-root.geometry("350x300")
-root.config(padx=20, pady=20)
-
-title_label = tk.Label(root, text="Enter City Name:", font=("Arial", 14))
-title_label.pack(pady=10)
-
-city_entry = tk.Entry(root, width=25, font=("Arial", 12))
-city_entry.pack()
-
-search_button = tk.Button(root, text="Get Weather", command=show_weather, font=("Arial", 12))
-search_button.pack(pady=10)
-
-result_label = tk.Label(root, text="", font=("Arial", 12), justify="left")
-result_label.pack(pady=10)
-
-root.mainloop()
